@@ -1,12 +1,14 @@
 #include "tokenize.hpp"
 
-
-
-vector<string> tokenize(string expression)
+//template<typename T>
+template<typename T>
+vector<string> Tokenize<T>::tokenize(string expression)
 {
+	vector<string> token;
+
+
 	string parseExpression = "";
 
-	vector<string> token;
 	
 	for (unsigned int i = 0; i < expression.size(); ++i)
 	{
@@ -22,10 +24,6 @@ vector<string> tokenize(string expression)
 	cout << "Parsed Expression: " << parseExpression << endl;
 
 	expression = parseExpression;
-
-	//maybe good time to start a switch case?
-	//if i see define start looping through until I see a variable, once i get a variable keep parsing and just moving deeper and deeper into state machine
-
 
 	for (unsigned int i = 0; i < expression.size(); ++i) // store into my vector 
 	{
@@ -84,86 +82,87 @@ vector<string> tokenize(string expression)
 
 	cout << endl;
 
-
-
 	return token;
 }
 
-bool buildAST(vector<string> token)
-{
-	
-
-
-	if (token[0] != "(") {
-		cerr << "Expression was invalid. It did not start with a '('." << endl;
-		return EXIT_FAILURE;
-	}
-
-	enum States { stateA, stateB, stateC, stateD, stateE };
-	enum States currentState = stateA;
-
-	unsigned int pos = 0;
-
-	while (pos < token.size())
-	{
-		switch (currentState)
-		{
-		case stateA:
-			if (token[pos] == "(") {
-				node *newNode = new node;
-			}
-
-			currentState = stateB;
-
-			break;
-
-		case stateB:
-			if (token[pos] == "define")
-			{
-			}
-			else if (token[pos] == "+")
-			{
-				//newNode->data = "+";
-				//newNode->next = nullptr;
-			}
-			else if (token[pos] == "*")
-			{
-			}
-			else if (token[pos] == "/")
-			{
-			}
-			else if (token[pos] == "-")
-			{
-			}
-
-			currentState = stateC;
-			break;
-
-		case stateC:
-			node *newNode = new node;
-			//if (isdigit(token[pos[0]]) == true || token[pos[0]] == '-')
-			//{
-				newNode->nChildren;
-			//}
-			break;
-
-		//case stateD:
-			//break;
-
-		//case stateE:
-			//break;
-		}
-	}
-
-}
+//bool buildAST(vector<string> token)
+//{
+//	
+//
+//
+//	if (token[0] != "(") {
+//		cerr << "Expression was invalid. It did not start with a '('." << endl;
+//		return EXIT_FAILURE;
+//	}
+//
+//	enum States { stateA, stateB, stateC, stateD, stateE };
+//	enum States currentState = stateA;
+//
+//	unsigned int pos = 0;
+//
+//	while (pos < token.size())
+//	{
+//		switch (currentState)
+//		{
+//		case stateA:
+//			if (token[pos] == "(") {
+//				node *newNode = new node;
+//			}
+//
+//			currentState = stateB;
+//
+//			break;
+//
+//		case stateB:
+//			if (token[pos] == "define")
+//			{
+//			}
+//			else if (token[pos] == "+")
+//			{
+//				//newNode->data = "+";
+//				//newNode->next = nullptr;
+//			}
+//			else if (token[pos] == "*")
+//			{
+//			}
+//			else if (token[pos] == "/")
+//			{
+//			}
+//			else if (token[pos] == "-")
+//			{
+//			}
+//
+//			currentState = stateC;
+//			break;
+//
+//		case stateC:
+//			node *newNode = new node;
+//			//if (isdigit(token[pos[0]]) == true || token[pos[0]] == '-')
+//			//{
+//				newNode->nChildren;
+//			//}
+//			break;
+//
+//		//case stateD:
+//			//break;
+//
+//		//case stateE:
+//			//break;
+//		}
+//	}
+//
+//}
+//
 
 int main(int argc, char *argv[])
 {
 	string expression; 
 	expression = argv[1];
+
+	Tokenize<string> m;
 	
-	vector<string> token = tokenize(expression);
-	buildAST(token);
+	vector<string> token = m.tokenize(expression);
+	//buildAST(token);
 
 	return 0;
 }

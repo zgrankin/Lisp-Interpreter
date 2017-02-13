@@ -12,6 +12,7 @@ using std::cin;
 using std::cerr;
 using std::endl;
 
+template<typename T>
 struct node {
 	string data;
 	vector<string> nChildren;
@@ -19,20 +20,19 @@ struct node {
 	node* prev;
 };
 
-//class Tokenize
-//{
-//public:
-
+template<typename T>
+class Tokenize
+{
+public:
 
 	vector<string> tokenize(string expression);
 
 	bool buildAST(vector<string> token);
 
-//private:
-
-
-//}
+};
 
 //#include "tokenize.cpp"
 
 #endif
+
+
