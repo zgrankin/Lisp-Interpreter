@@ -16,8 +16,8 @@ template<typename T>
 struct node {
 	string data;
 	vector<string> nChildren;
-	node* next;
-	node* prev;
+	node<T>* next;
+	node<T>* prev;
 };
 
 template<typename T>
