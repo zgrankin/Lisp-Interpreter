@@ -11,13 +11,16 @@ using std::cout;
 using std::cin;
 using std::cerr;
 using std::endl;
+using std::getline;
+
+enum VariantType { NoneType, BoolType, NumberType, SymbolType };
 
 template<typename T>
 struct node {
-	string data;
-	vector<string> nChildren;
-	node<T>* next;
-	node<T>* prev;
+	vector<node<T>*> children;
+	node<T>* parent;
+	VariantType atomType = NoneType;
+	T data;
 };
 
 template<typename T>
@@ -27,7 +30,14 @@ public:
 
 	vector<string> tokenize(string expression);
 
-	bool buildAST(vector<string> token);
+	bool buildAST(vector<string> token); // what should I store as boolean type when making the tree?
+
+	void traversePostOrder(node<string> *currentNode);
+
+private:
+	node<T>* head;
+	node<T>* tail;
+	node<T>* currentNode;
 
 };
 
