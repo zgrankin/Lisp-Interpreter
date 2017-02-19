@@ -23,6 +23,10 @@ struct node {
 	T data;
 };
 
+struct Atom {
+	
+};
+
 template<typename T>
 class Tokenize
 {

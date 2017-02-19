@@ -116,10 +116,29 @@ bool Tokenize<T>::buildAST(vector<string> token)
 		}
 		break;
 
-		case stateB: // check for SymbolType
+		case stateB: // check for NumberType
 		{
-			if (!isdigit(token[pos][0]) && token[pos][0] != '-') {
-				tail->atomType = SymbolType;
+			bool isNumber = true;
+			unsigned eCount = 0;
+			for (unsigned int i = 0; i < token[pos].size(); i++)
+			{
+				if (!isdigit(token[pos][i]))
+				{
+					if (i == 0 && token[pos][i] == '-')
+						;
+					else if (i > 0 && i != token[pos].size() - 1 && token[pos][i] == 'e' && token[pos][i - 1] != '-')
+						eCount++;
+					else
+						isNumber = false;
+
+					if (eCount > 1)
+						isNumber = false;
+				}
+			}
+
+			if (isNumber == true)
+			{
+				tail->atomType = NumberType;
 				tail->data = token[pos];
 				pos++;
 				currentState = stateA;
@@ -130,17 +149,10 @@ bool Tokenize<T>::buildAST(vector<string> token)
 		}
 		break;
 
-		case stateC: // check for NumberType
+		case stateC: // check for SymbolType
 		{
-			bool isNumber = true;
-			for (unsigned int i = 0; i < token[pos].size(); i++) {
-				if (!isdigit(token[pos][i]))
-					isNumber = false;
-			}
-
-			if (isNumber == true)
-			{
-				tail->atomType = NumberType;
+			if (!isdigit(token[pos][0])) {
+				tail->atomType = SymbolType;
 				tail->data = token[pos];
 				pos++;
 				currentState = stateA;
@@ -153,7 +165,10 @@ bool Tokenize<T>::buildAST(vector<string> token)
 
 		case stateD:
 		{
-			;
+			tail->atomType = NoneType;
+			tail->data = token[pos];
+			pos++;
+			currentState = stateA;
 		}
 		break;
 
@@ -174,7 +189,7 @@ void Tokenize<T>::traversePostOrder(node<string> *currentNode)
 	{
 		traversePostOrder(currentNode->children[i]);
 	}
-	cout << currentNode->data << endl;
+	cout << currentNode->data << currentNode->atomType << endl;
 }
 
 
