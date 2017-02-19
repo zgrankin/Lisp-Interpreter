@@ -138,8 +138,8 @@ bool Tokenize<T>::buildAST(vector<string> token)
 
 			if (isNumber == true)
 			{
-				tail->atomType = NumberType;
-				tail->data = token[pos];
+				tail->atom.atomType = NumberType;
+				tail->atom.data = token[pos];
 				pos++;
 				currentState = stateA;
 			}
@@ -152,8 +152,8 @@ bool Tokenize<T>::buildAST(vector<string> token)
 		case stateC: // check for SymbolType
 		{
 			if (!isdigit(token[pos][0])) {
-				tail->atomType = SymbolType;
-				tail->data = token[pos];
+				tail->atom.atomType = SymbolType;
+				tail->atom.data = token[pos];
 				pos++;
 				currentState = stateA;
 			}
@@ -165,8 +165,8 @@ bool Tokenize<T>::buildAST(vector<string> token)
 
 		case stateD:
 		{
-			tail->atomType = NoneType;
-			tail->data = token[pos];
+			tail->atom.atomType = NoneType;
+			tail->atom.data = token[pos];
 			pos++;
 			currentState = stateA;
 		}
@@ -189,22 +189,23 @@ void Tokenize<T>::traversePostOrder(node<string> *currentNode)
 	{
 		traversePostOrder(currentNode->children[i]);
 	}
-	cout << currentNode->data << currentNode->atomType << endl;
+	cout << currentNode->atom.data << currentNode->atom.atomType << endl;
 }
 
 
-int main(int argc, char *argv[])
-{
-	string expression;
-	expression = argv[1];
+//int main(int argc, char *argv[])
+//{
+//	string expression;
+//	expression = argv[1];
+//
+//	Tokenize<string> m;
+//
+//	vector<string> token = m.tokenize(expression);
+//	m.buildAST(token);
+//
+//	return 0;
+//}
 
-	Tokenize<string> m;
-
-	vector<string> token = m.tokenize(expression);
-	m.buildAST(token);
-
-	return 0;
-}
 
 
 

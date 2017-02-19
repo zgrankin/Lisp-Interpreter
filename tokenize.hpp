@@ -2,6 +2,7 @@
 #define _TOKENIZE_H_
 
 #include <iostream>
+#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -16,15 +17,18 @@ using std::getline;
 enum VariantType { NoneType, BoolType, NumberType, SymbolType };
 
 template<typename T>
-struct node {
-	vector<node<T>*> children;
-	node<T>* parent;
+struct Atom {
 	VariantType atomType = NoneType;
 	T data;
 };
 
-struct Atom {
-	
+template<typename T>
+struct node {
+	vector<node<T>*> children;
+	node<T>* parent;
+	Atom<T> atom;
+
+
 };
 
 template<typename T>
@@ -38,14 +42,16 @@ public:
 
 	void traversePostOrder(node<string> *currentNode);
 
-private:
 	node<T>* head;
 	node<T>* tail;
 	node<T>* currentNode;
 
+private:
+	
+
 };
 
-//#include "tokenize.cpp"
+#include "tokenize.cpp"
 
 #endif
 
