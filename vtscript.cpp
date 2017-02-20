@@ -7,13 +7,50 @@ int main(int argc, char *argv[])
 {
 	string expression;
 	string argument;
-	argument = argv[1];
+	
 
-	if (argc == 3 && argument == "-e")
+	if (argc == 3)
 	{
-		expression = argv[2];
+		argument = argv[1];
+		if (argument == "-e") {
 
-		std::istringstream ss(expression);
+			expression = argv[2];
+
+			std::istringstream ss(expression);
+			Interpreter a;
+
+			if (a.parse(ss)) {
+				try {
+					a.eval().outputFinalAnswer();
+				}
+				catch (InterpreterSemanticError &error) {
+					std::cout << error.what() << std::endl;
+					return EXIT_FAILURE;
+				}
+			}
+			else {
+				std::cerr << "Error: Parsing failed.";
+				return EXIT_FAILURE;
+			}
+		}
+	}
+
+	else if (argc == 2)
+	{
+		string filename = argv[1];
+		string initialExpression = "";
+		string finalExpression = "";
+
+		std::ifstream instream(filename);
+		getline(instream, initialExpression);
+		while (!instream.fail()){
+			finalExpression.append(initialExpression.substr(0, initialExpression.find(';')));
+			finalExpression.append(" ");
+			getline(instream, initialExpression);
+		}
+		std::cout << finalExpression << endl;
+
+		std::istringstream ss(finalExpression);
 		Interpreter a;
 
 		if (a.parse(ss)) {
@@ -22,30 +59,42 @@ int main(int argc, char *argv[])
 			}
 			catch (InterpreterSemanticError &error) {
 				std::cout << error.what() << std::endl;
+				return EXIT_FAILURE;
 			}
 		}
-		else
+		else {
 			std::cerr << "Error: Parsing failed.";
-	}
-
-	else if (argc == 2)
-	{
-		string filename = argv[1];
-		string trash;
-		string finalExpression = "";
-
-		std::ifstream istream(filename);
-
-		while (!istream.fail())
-		{
-			std::getline(istream, expression, ';');
-			finalExpression += expression;
-			std::getline(istream, trash);
+			return EXIT_FAILURE;
 		}
 
-		cout << finalExpression << endl;
+	}
+	
+	else if (argc == 1)
+	{
+		std::string b;
+		Interpreter a;
+
+		while (1)
+		{
+			std::cout << "vtscript> ";
+			getline(cin, b);
+			std::istringstream ss(b);
+
+			if (a.parse(ss)) {
+				try {
+					a.eval().outputFinalAnswer();
+				}
+				catch (InterpreterSemanticError &error) {
+					std::cout << error.what() << std::endl;
+				}
+			}
+			else
+				std::cerr << "Error: Parsing failed.";
+		}
 
 	}
+	else
+		std::cerr << "Error: Invalid Arguments." << std::endl;
 
 	return 0;
 }

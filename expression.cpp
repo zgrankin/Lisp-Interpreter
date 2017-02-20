@@ -25,8 +25,6 @@ Expression::Expression(const std::string & value)
 
 void Expression::defineMethod()
 {
-	if (children.size() >= 1) {
-
 		if (atom.var == "+") {
 			for (unsigned int i = 0; i < children.size(); i++) {
 				if (children[i]->atom.atomType == NumberType) {
@@ -140,7 +138,10 @@ void Expression::defineMethod()
 			else
 				throw InterpreterSemanticError("Error: Improper arguments for logic operator \"not\".");
 		}
-	}
+		else if (atom.atomType == SymbolType)
+		{
+			atom = environment->findVar(atom.var);
+		}
 }
 
 Expression Expression::evaluateTree()
@@ -189,14 +190,13 @@ Expression Expression::evaluateTree()
 		}
 	}
 
-	else
+	else// if (atom.atomType == SymbolType)
 	{
 		for (unsigned int i = 0; i < children.size(); i++){
 			children[i]->evaluateTree();
 		}
 		defineMethod();
 	}
-
 
 	/*std::cout << "Number Result: " << atom.number << std::endl;
 	std::cout << "Bool Result: ";
@@ -223,4 +223,32 @@ void Expression::outputFinalAnswer()
 	}
 		
 	
+}
+
+bool Expression::operator==(const Expression & exp) const noexcept
+{
+	if (atom.atomType == exp.atom.atomType && atom.atomType == BoolType)
+	{
+		if (atom.truthValue == exp.atom.truthValue && children.size() == exp.children.size())
+			return true;
+		else
+			return false;
+	}
+
+	else if (atom.atomType == exp.atom.atomType && atom.atomType == NumberType)
+	{
+		if (atom.number == exp.atom.number && children.size() == exp.children.size())
+			return true;
+		else
+			return false;
+
+	}
+
+	else if (atom.atomType == exp.atom.atomType && atom.atomType == SymbolType)
+	{
+		if (atom.var == exp.atom.var && children.size() == exp.children.size())
+			return true;
+		else
+			return false;
+	}
 }
