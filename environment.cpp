@@ -2,7 +2,8 @@
 
 Environment::Environment()
 {
-
+	Atom atom;
+	setVariable("begin", atom);
 }
 
 bool Environment::setVariable(std::string aString, Atom envAtom)

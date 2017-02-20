@@ -142,6 +142,7 @@ void Expression::defineMethod()
 		{
 			atom = environment->findVar(atom.var);
 		}
+		//hi
 }
 
 Expression Expression::evaluateTree()
