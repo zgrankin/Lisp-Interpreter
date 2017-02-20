@@ -19,8 +19,8 @@ public:
 	Expression eval();
 
 private:
-	Tokenize<string> tree;
-
+	Tokenize tree;
+	Expression expression;
 	string streamToString(std::istream &in);
 	
 

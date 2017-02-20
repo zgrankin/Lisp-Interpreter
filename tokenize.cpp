@@ -1,8 +1,7 @@
 #include "tokenize.hpp"
+#include "environment.hpp"
 
-//template<typename T>
-template<typename T>
-vector<string> Tokenize<T>::tokenize(string expression)
+vector<string> Tokenize::tokenize(string expression)
 {
 	vector<string> token;
 
@@ -20,8 +19,8 @@ vector<string> Tokenize<T>::tokenize(string expression)
 			expressionHolder = expressionHolder + expression[i];
 	}
 
-	cout << "Expression: " << expression << endl;
-	cout << "Parsed Expression: " << expressionHolder << endl;
+	/*cout << "Expression: " << expression << endl;
+	cout << "Parsed Expression: " << expressionHolder << endl;*/
 
 	expression = expressionHolder;
 
@@ -42,22 +41,37 @@ vector<string> Tokenize<T>::tokenize(string expression)
 		}
 	}
 
-	for (unsigned int i = 0; i < token.size(); ++i)
-		cout << "This is the token: " << token[i] << endl;
+	/*for (unsigned int i = 0; i < token.size(); ++i)
+		cout << "This is the token: " << token[i] << endl;*/
 
-	cout << endl;
+	//cout << endl;
 
 	return token;
 }
 
-template<typename T>
-bool Tokenize<T>::buildAST(vector<string> token)
+bool Tokenize::buildAST(vector<string> token)
 {
-
+	environment = new Environment();
 	if (token[0] != "(") {
-		cerr << "Expression could not be parsed. It did not start with a '('." << endl;
-		return EXIT_FAILURE;
+		//cerr << "Expression could not be parsed. It did not start with a '('." << endl;
+		return false;
 	}
+
+	unsigned leftCount = 0;
+	unsigned rightCount = 0;
+	for (unsigned int i = 0; i < token.size(); i++)
+	{
+		if (token[i] == "(")
+			leftCount++;
+		else if (token[i] == ")")
+			rightCount++;
+
+		if (rightCount > leftCount)
+			return false;
+	}
+
+	if (leftCount != rightCount)
+		return false;
 
 	enum States { stateA, stateB, stateC, stateD, stateE };
 	enum States currentState = stateA;
@@ -66,17 +80,13 @@ bool Tokenize<T>::buildAST(vector<string> token)
 
 	while (pos < token.size())
 	{
-		if (pos == 3)
-		{
-			int a;
-			a = 0;
-		}
 		switch (currentState)
 		{
 		case stateA:
 		{
 			if (token[pos] == "(" && token[pos + 1] != ")") {
-				node<T> *newNode = new node<T>;
+				Expression *newNode = new Expression;
+				newNode->environment = environment;
 				if (pos == 0) {
 					newNode->parent = nullptr; head = newNode; tail = newNode; currentNode = newNode;
 				}
@@ -92,7 +102,7 @@ bool Tokenize<T>::buildAST(vector<string> token)
 
 			else if (token[pos] == "(" && token[pos + 1] == ")")
 			{
-				cerr << "Parsing error: '(' was followed by ')'" << endl;
+				//cerr << "Parsing error: '(' was followed by ')'" << endl;
 				return false;
 			}
 
@@ -100,13 +110,18 @@ bool Tokenize<T>::buildAST(vector<string> token)
 			{
 				if (currentNode->parent != nullptr)
 					currentNode = currentNode->parent;
+				else if (currentNode->parent == nullptr && pos == token.size() - 1)
+					return true;
+				else if (currentNode->parent == nullptr && pos < token.size() - 1)
+					return false;
 				pos++;
 				currentState = stateA;
 			}
 
 			else
 			{
-				node<T> *newNode = new node<T>;
+				Expression *newNode = new Expression;
+				newNode->environment = environment;
 				tail = newNode;
 				tail->parent = currentNode;
 				currentNode->children.push_back(tail);
@@ -120,26 +135,35 @@ bool Tokenize<T>::buildAST(vector<string> token)
 		{
 			bool isNumber = true;
 			unsigned eCount = 0;
-			for (unsigned int i = 0; i < token[pos].size(); i++)
-			{
-				if (!isdigit(token[pos][i]))
+			unsigned negCount = 0;
+			unsigned decimalCount = 0;
+			if (token[pos].size() == 1 && token[pos][0] == '-')
+				isNumber = false;
+			else {
+				for (unsigned int i = 0; i < token[pos].size(); i++)
 				{
-					if (i == 0 && token[pos][i] == '-')
-						;
-					else if (i > 0 && i != token[pos].size() - 1 && token[pos][i] == 'e' && token[pos][i - 1] != '-')
-						eCount++;
-					else
-						isNumber = false;
+					if (!isdigit(token[pos][i]))
+					{
+						if ((i == 0 && token[pos][i] == '-') || (i >= 2 && token[pos][i - 1] == 'e' && token[pos][i] == '-'))
+							negCount++;
+						else if (i > 0 && i != token[pos].size() - 1 && token[pos][i] == 'e' && token[pos][i - 1] != '-')
+							eCount++;
+						else if (i > 0 && token[pos][i] == '.' && isdigit(token[pos][i-1]) && eCount == 0)
+							decimalCount++;
+						else
+							isNumber = false;
 
-					if (eCount > 1)
-						isNumber = false;
+						if (eCount > 1 || negCount > 2 || decimalCount > 1)
+							isNumber = false;
+					}
 				}
 			}
 
 			if (isNumber == true)
 			{
 				tail->atom.atomType = NumberType;
-				tail->atom.data = token[pos];
+				tail->atom.number = stod(token[pos]);
+				tail->atom.var = token[pos]; /////////////////
 				pos++;
 				currentState = stateA;
 			}
@@ -151,61 +175,75 @@ bool Tokenize<T>::buildAST(vector<string> token)
 
 		case stateC: // check for SymbolType
 		{
-			if (!isdigit(token[pos][0])) {
+			if (token[pos] == "True" || token[pos] == "False")
+				currentState = stateD;
+			else if (token[pos][0] == '-' && isdigit(token[pos][1]))
+				currentState = stateE;
+			else if (!isdigit(token[pos][0])) {
 				tail->atom.atomType = SymbolType;
-				tail->atom.data = token[pos];
+				tail->atom.var = token[pos];
 				pos++;
 				currentState = stateA;
 			}
 
 			else
-				currentState = stateD;
+				currentState = stateE;
 		}
 		break;
 
 		case stateD:
 		{
-			tail->atom.atomType = NoneType;
-			tail->atom.data = token[pos];
+			tail->atom.atomType = BoolType;
+			if (token[pos] == "True")
+				tail->atom.truthValue = true;
+			else if (token[pos] == "False")
+				tail->atom.truthValue = false;
+			tail->atom.var = token[pos];////////////////
 			pos++;
 			currentState = stateA;
 		}
 		break;
 
-		//case stateE:
-		//break;
+		case stateE:
+		{
+			destroyAST(head);
+			return false;
+		}
+			break;
 		}
 
 	}
 
 	traversePostOrder(head);
 
+	return true;
 }
 
-template <typename T>
-void Tokenize<T>::traversePostOrder(node<string> *currentNode)
+void Tokenize::traversePostOrder(Expression *currentNode)
 {
-	for (int i = 0; i < currentNode->children.size(); i++)
+	for (unsigned int i = 0; i < currentNode->children.size(); i++)
 	{
 		traversePostOrder(currentNode->children[i]);
 	}
-	cout << currentNode->atom.data << currentNode->atom.atomType << endl;
+	cout << currentNode->atom.var << ": ";
+	if (currentNode->atom.atomType == 0)
+		cout << "noneType" << endl;
+	else if (currentNode->atom.atomType == 1)
+		cout << "boolType" << endl;
+	else if (currentNode->atom.atomType == 2)
+		cout << "numberType" << endl;
+	else if (currentNode->atom.atomType == 3)
+		cout << "symbolType" << endl;
 }
 
 
-//int main(int argc, char *argv[])
-//{
-//	string expression;
-//	expression = argv[1];
-//
-//	Tokenize<string> m;
-//
-//	vector<string> token = m.tokenize(expression);
-//	m.buildAST(token);
-//
-//	return 0;
-//}
-
-
+void Tokenize::destroyAST(Expression *currentNode)
+{
+	for (unsigned int i = 0; i < currentNode->children.size(); i++)
+	{
+		destroyAST(currentNode->children[i]);
+		delete currentNode;
+	}
+}
 
 

@@ -1,11 +1,32 @@
 #ifndef _EXPRESSION_H_
 #define _EXPRESSION_H_
 
-#include "tokenize.hpp"
+#include <string>
+#include <vector>
+#include "interpreter_semantic_error.hpp"
+
+using std::vector;
+using std::string;
+
+enum VariantType { NoneType, BoolType, NumberType, SymbolType };
+
+class Environment;
+
+struct Atom {
+	VariantType atomType = NoneType;
+	double number;
+	bool truthValue;
+	string var;
+};
 
 class Expression
 {
 public:
+	Environment* environment;
+
+	vector<Expression*> children;
+	Expression* parent;
+	Atom atom;
 
 	// Default construct an Expression of type None
 	Expression();
@@ -25,7 +46,9 @@ public:
 
 	void defineMethod();
 	
-	void evaluateTree();
+	Expression evaluateTree();
+
+	void outputFinalAnswer();
 
 private:
 	

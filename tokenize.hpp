@@ -6,6 +6,10 @@
 #include <string>
 #include <vector>
 
+#include "expression.hpp"
+
+class Environment;
+
 using std::string;
 using std::vector;
 using std::cout;
@@ -14,44 +18,31 @@ using std::cerr;
 using std::endl;
 using std::getline;
 
-enum VariantType { NoneType, BoolType, NumberType, SymbolType };
-
-template<typename T>
-struct Atom {
-	VariantType atomType = NoneType;
-	T data;
-};
-
-template<typename T>
-struct node {
-	vector<node<T>*> children;
-	node<T>* parent;
-	Atom<T> atom;
 
 
-};
-
-template<typename T>
 class Tokenize
 {
 public:
 
-	vector<string> tokenize(string expression);
+	std::vector<string> tokenize(string expression);
 
-	bool buildAST(vector<string> token); // what should I store as boolean type when making the tree?
+	bool buildAST(std::vector<string> token); // what should I store as boolean type when making the tree?
 
-	void traversePostOrder(node<string> *currentNode);
+	void traversePostOrder(Expression* currentNode);
 
-	node<T>* head;
-	node<T>* tail;
-	node<T>* currentNode;
+	void destroyAST(Expression* currentNode);
+
+	Expression* head;
+	Expression* tail;
+	Expression* currentNode;
+	Environment* environment;
 
 private:
 	
 
 };
 
-#include "tokenize.cpp"
+//#include "tokenize.cpp"
 
 #endif
 
