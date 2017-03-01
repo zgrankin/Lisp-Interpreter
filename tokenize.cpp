@@ -27,7 +27,7 @@ vector<string> Tokenize::tokenize(string expression)
 	string newVar = "";
 	for (unsigned int i = 0; i < expression.size(); ++i) // store into my vector 
 	{
-		if (expression[i] == ' ') { // string will be considered empty even filled with a space
+		if (expression[i] == ' ' || expression[i] == 13) {
 
 			if (!newVar.empty())
 			{
@@ -41,8 +41,8 @@ vector<string> Tokenize::tokenize(string expression)
 		}
 	}
 
-	/*for (unsigned int i = 0; i < token.size(); ++i)
-		cout << "This is the token: " << token[i] << endl;*/
+	//for (unsigned int i = 0; i < token.size(); ++i)
+			//cout << "This is the token: " << token[i] << endl;
 
 	//cout << endl;
 
@@ -52,7 +52,6 @@ vector<string> Tokenize::tokenize(string expression)
 bool Tokenize::buildAST(vector<string> token)
 {
 	if (token.size() == 0 || token[0] != "(") {
-		//cerr << "Expression could not be parsed. It did not start with a '('." << endl;
 		return false;
 	}
 
