@@ -1,7 +1,6 @@
 #include "environment.hpp"
 
-Environment::Environment()
-{
+Environment::Environment() {
 	Atom atom;
 	setVariable("begin", atom);
 }

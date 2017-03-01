@@ -1,5 +1,5 @@
 #include "tokenize.hpp"
-#include "environment.hpp"
+#include "interpreter.hpp"
 
 vector<string> Tokenize::tokenize(string expression)
 {
@@ -51,8 +51,7 @@ vector<string> Tokenize::tokenize(string expression)
 
 bool Tokenize::buildAST(vector<string> token)
 {
-	environment = new Environment();
-	if (token[0] != "(") {
+	if (token.size() == 0 || token[0] != "(") {
 		//cerr << "Expression could not be parsed. It did not start with a '('." << endl;
 		return false;
 	}

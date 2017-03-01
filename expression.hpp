@@ -1,5 +1,5 @@
-#ifndef _EXPRESSION_H_
-#define _EXPRESSION_H_
+#ifndef _EXPRESSION_HPP_
+#define _EXPRESSION_HPP_
 
 #include <string>
 #include <vector>

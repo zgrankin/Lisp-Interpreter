@@ -1,5 +1,5 @@
-#ifndef _TOKENIZE_H_
-#define _TOKENIZE_H_
+#ifndef _TOKENIZE_HPP_
+#define _TOKENIZE_HPP_
 
 #include <iostream>
 #include <cstdlib>
@@ -7,8 +7,6 @@
 #include <vector>
 
 #include "expression.hpp"
-
-class Environment;
 
 using std::string;
 using std::vector;
@@ -19,10 +17,10 @@ using std::endl;
 using std::getline;
 
 
-
 class Tokenize
 {
 public:
+	Environment* environment;
 
 	std::vector<string> tokenize(string expression);
 
@@ -35,7 +33,7 @@ public:
 	Expression* head;
 	Expression* tail;
 	Expression* currentNode;
-	Environment* environment;
+	
 
 private:
 	

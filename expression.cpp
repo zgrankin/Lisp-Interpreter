@@ -142,7 +142,6 @@ void Expression::defineMethod()
 		{
 			atom = environment->findVar(atom.var);
 		}
-		//hi
 }
 
 Expression Expression::evaluateTree()
@@ -175,18 +174,18 @@ Expression Expression::evaluateTree()
 			if (children[0]->atom.truthValue == true)
 			{
 				children[1]->evaluateTree();
-				atom.atomType = children[children.size() - 1]->atom.atomType;
-				atom.number = children[children.size() - 1]->atom.number;
-				atom.truthValue = children[children.size() - 1]->atom.truthValue;
-				atom.var = children[children.size() - 1]->atom.var;
+				atom.atomType = children[1]->atom.atomType;
+				atom.number = children[1]->atom.number;
+				atom.truthValue = children[1]->atom.truthValue;
+				atom.var = children[1]->atom.var;
 			}
 			else if (children[0]->atom.truthValue == false)
 			{
 				children[2]->evaluateTree();
-				atom.atomType = children[children.size() - 1]->atom.atomType;
-				atom.number = children[children.size() - 1]->atom.number;
-				atom.truthValue = children[children.size() - 1]->atom.truthValue;
-				atom.var = children[children.size() - 1]->atom.var;
+				atom.atomType = children[2]->atom.atomType;
+				atom.number = children[2]->atom.number;
+				atom.truthValue = children[2]->atom.truthValue;
+				atom.var = children[2]->atom.var;
 			}
 		}
 	}

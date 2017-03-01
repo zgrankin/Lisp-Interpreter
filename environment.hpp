@@ -1,6 +1,11 @@
+#ifndef _ENVIRONMENT_HPP_
+#define _ENVIRONMENT_HPP_
+
 #include <string>
 #include <map>
-#include "interpreter.hpp"
+#include "expression.hpp"
+
+using namespace std;
 
 
 class Environment {
@@ -15,3 +20,5 @@ public:
 private:
 	
 };
+
+#endif

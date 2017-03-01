@@ -1,6 +1,9 @@
+#ifndef _INTERPRETER_HPP_
+#define _INTERPRETER_HPP_
+
 #include "tokenize.hpp"
 #include "expression.hpp"
-
+#include "environment.hpp"
 #include <sstream>
 
 class Interpreter {
@@ -16,11 +19,15 @@ public:
 	// Evaluate the current AST and return the resulting Expression
 	// throws InterpreterSemanticError if a semantic error is encountered
 	// the exception message string should document the nature of the semantic error 
-	Expression eval();
+	Expression eval();	
 
 private:
 	Tokenize tree;
 	Expression expression;
+	Environment theEnvironment;
+
 	string streamToString(std::istream &in);
 
 };
+
+#endif

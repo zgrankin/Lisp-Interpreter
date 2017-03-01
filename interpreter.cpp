@@ -1,11 +1,14 @@
 #include "interpreter.hpp"
+#include "environment.hpp"
 
-Interpreter::Interpreter()
-{
+Interpreter::Interpreter(){
+	//environment = new Environment();
+	tree.environment = &theEnvironment;
 }
 
 bool Interpreter::parse(std::istream & expression) noexcept
 {
+	
 	string tokenString = streamToString(expression);
 	vector<string> token = tree.tokenize(tokenString);
 	return tree.buildAST(token);
