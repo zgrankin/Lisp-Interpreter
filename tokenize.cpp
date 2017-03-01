@@ -206,7 +206,7 @@ bool Tokenize::buildAST(vector<string> token)
 
 		case stateE:
 		{
-			destroyAST(head);
+			//destroyAST(head);
 			return false;
 		}
 			break;
@@ -237,13 +237,13 @@ void Tokenize::traversePostOrder(Expression *currentNode)
 }
 
 
-void Tokenize::destroyAST(Expression *currentNode)
-{
-	for (unsigned int i = 0; i < currentNode->children.size(); i++)
-	{
-		destroyAST(currentNode->children[i]);
-		delete currentNode;
-	}
-}
+//void Tokenize::destroyAST(Expression *currentNode)
+//{
+//	for (unsigned int i = 0; i < currentNode->children.size(); i++)
+//	{
+//		destroyAST(currentNode->children[i]);
+//		delete currentNode;
+//	}
+//}
 
 

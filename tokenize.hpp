@@ -30,7 +30,7 @@ public:
 
 	void traversePostOrder(Expression* currentNode);
 
-	void destroyAST(Expression* currentNode);
+	//void destroyAST(Expression* currentNode);
 
 	Expression* head;
 	Expression* tail;

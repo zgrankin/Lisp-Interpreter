@@ -209,13 +209,13 @@ Expression Expression::evaluateTree()
 
 void Expression::outputFinalAnswer()
 {
-	if (atom.atomType = NumberType)
+	if (atom.atomType == NumberType)
 		cout << "(" << atom.number << ")" << endl;
 	
-	else if (atom.atomType = SymbolType)
+	else if (atom.atomType == SymbolType)
 		cout << "(" << atom.var << ")" << endl;
 
-	else if (atom.atomType = BoolType)
+	else if (atom.atomType == BoolType)
 	{
 		if (atom.truthValue == true)
 			cout << "(" << "True" << ")" << endl;
@@ -242,7 +242,6 @@ bool Expression::operator==(const Expression & exp) const noexcept
 			return true;
 		else
 			return false;
-
 	}
 
 	else if (atom.atomType == exp.atom.atomType && atom.atomType == SymbolType)
@@ -252,4 +251,6 @@ bool Expression::operator==(const Expression & exp) const noexcept
 		else
 			return false;
 	}
+
+	return false;
 }

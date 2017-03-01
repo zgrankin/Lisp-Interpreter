@@ -22,6 +22,5 @@ private:
 	Tokenize tree;
 	Expression expression;
 	string streamToString(std::istream &in);
-	
 
 };

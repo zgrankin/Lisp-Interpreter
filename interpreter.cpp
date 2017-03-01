@@ -18,10 +18,11 @@ Expression Interpreter::eval()
 
 string Interpreter::streamToString(std::istream & in)
 {
-	string tokenString;
+	/*string tokenString;
 	char buffer[4096];
 	while (in.read(buffer, sizeof(buffer)))
 		tokenString.append(buffer, sizeof(buffer));
-	tokenString.append(buffer, in.gcount());
+	tokenString.append(buffer, in.gcount());*/
+	string tokenString(std::istreambuf_iterator<char>(in), {});
 	return tokenString;
 }
