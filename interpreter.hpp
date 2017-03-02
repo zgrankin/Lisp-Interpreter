@@ -26,7 +26,7 @@ private:
 	Expression expression;
 	Environment theEnvironment;
 
-	string streamToString(std::istream &in);
+	string streamToString(std::istream &expression);
 
 };
 

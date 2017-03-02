@@ -3,11 +3,10 @@
 
 vector<string> Tokenize::tokenize(string expression)
 {
+
+
 	vector<string> token;
-
-
 	string expressionHolder = "";
-
 
 	for (unsigned int i = 0; i < expression.size(); ++i) // add spaces around the parentheses for easier tokenizing
 	{

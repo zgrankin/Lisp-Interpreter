@@ -5,27 +5,44 @@
 
 Expression::Expression()
 {
+	atom.atomType = NoneType;
+}
 
+Expression::~Expression()
+{
+	/*std::size_t SIZE = children.size();
+	for (unsigned int i = 0; i < SIZE; i++) {
+		delete children[0];
+		children.erase(children.begin());
+	}*/
 }
 
 Expression::Expression(bool value)
 {
-
+	atom.atomType = BoolType;
+	atom.truthValue = value;
+	if (value == true)
+		atom.var = "True";
+	else if (value == false)
+		atom.var = "False";
 }
 
 Expression::Expression(double value)
 {
-
+	atom.atomType = NumberType;
+	atom.number = value;
 }
 
 Expression::Expression(const std::string & value)
 {
-
+	atom.atomType = SymbolType;
+	atom.var = value;
 }
 
 void Expression::defineMethod()
 {
 		if (atom.var == "+") {
+			atom.number = 0;
 			for (unsigned int i = 0; i < children.size(); i++) {
 				if (children[i]->atom.atomType == NumberType) {
 					atom.number += children[i]->atom.number;
@@ -34,6 +51,7 @@ void Expression::defineMethod()
 				else
 					throw InterpreterSemanticError("Error: Improper arguments for addition.");
 			}
+			euthanizeChildren();
 		}
 		else if (atom.var == "*") {
 			atom.number = 1;
@@ -45,6 +63,7 @@ void Expression::defineMethod()
 				else
 					throw InterpreterSemanticError("Error: Improper arguments for multiplication.");
 			}
+			euthanizeChildren();
 		}
 
 		else if (atom.var == "and") {
@@ -57,6 +76,7 @@ void Expression::defineMethod()
 				else
 					throw InterpreterSemanticError("Error: Improper arguments for logic operator \"and\".");
 			}
+			euthanizeChildren();
 		}
 		else if (atom.var == "or") {
 			atom.truthValue = false;
@@ -68,18 +88,23 @@ void Expression::defineMethod()
 				else
 					throw InterpreterSemanticError("Error: Improper arguments for logic operator \"or\".");
 			}
+			euthanizeChildren();
 		}
 		else if (atom.var == "-") {
 			if (children.size() == 2 && children[0]->atom.atomType == NumberType && children[1]->atom.atomType == NumberType) {
 				atom.number = children[0]->atom.number - children[1]->atom.number;
 				atom.atomType = NumberType;
+
 			}
 			else if (children.size() == 1 && children[0]->atom.atomType == NumberType) {
 				atom.number = children[0]->atom.number * -1;
 				atom.atomType = NumberType;
+
 			}
 			else
 				throw InterpreterSemanticError("Error: Improper arguments for subtraction.");
+
+			euthanizeChildren();
 		}
 		else if (atom.var == "/") {
 			if (children.size() == 2 && children[0]->atom.atomType == NumberType && children[1]->atom.atomType == NumberType) {
@@ -88,6 +113,8 @@ void Expression::defineMethod()
 			}
 			else
 				throw InterpreterSemanticError("Error: Improper arguments for division.");
+
+			euthanizeChildren();
 		}
 
 		else if (atom.var == "<") {
@@ -97,6 +124,8 @@ void Expression::defineMethod()
 			}
 			else
 				throw InterpreterSemanticError("Error: Improper arguments for logic operator \"<\".");
+
+			euthanizeChildren();
 		}
 		else if (atom.var == "<=") {
 			if (children.size() == 2 && children[0]->atom.atomType == NumberType && children[1]->atom.atomType == NumberType) {
@@ -105,6 +134,8 @@ void Expression::defineMethod()
 			}
 			else
 				throw InterpreterSemanticError("Error: Improper arguments for logic operator \"<=\".");
+
+			euthanizeChildren();
 		}
 		else if (atom.var == ">") {
 			if (children.size() == 2 && children[0]->atom.atomType == NumberType && children[1]->atom.atomType == NumberType) {
@@ -113,6 +144,8 @@ void Expression::defineMethod()
 			}
 			else
 				throw InterpreterSemanticError("Error: Improper arguments for logic operator \">\".");
+
+			euthanizeChildren();
 		}
 		else if (atom.var == ">=") {
 			if (children.size() == 2 && children[0]->atom.atomType == NumberType && children[1]->atom.atomType == NumberType) {
@@ -121,6 +154,8 @@ void Expression::defineMethod()
 			}
 			else
 				throw InterpreterSemanticError("Error: Improper arguments for logic operator \">=\".");
+
+			euthanizeChildren();
 		}
 		else if (atom.var == "=") {
 			if (children.size() == 2 && children[0]->atom.atomType == NumberType && children[1]->atom.atomType == NumberType) {
@@ -129,6 +164,8 @@ void Expression::defineMethod()
 			}
 			else
 				throw InterpreterSemanticError("Error: Improper arguments for logic operator \"=\".");
+
+			euthanizeChildren();
 		}
 		else if (atom.var == "not") {
 			if (children.size() == 1 && children[0]->atom.atomType == BoolType) {
@@ -137,10 +174,16 @@ void Expression::defineMethod()
 			}
 			else
 				throw InterpreterSemanticError("Error: Improper arguments for logic operator \"not\".");
+
+			euthanizeChildren();
 		}
 		else if (atom.atomType == SymbolType)
 		{
 			atom = environment->findVar(atom.var);
+
+			euthanizeChildren();
+			if (atom.atomType == NoneType)
+				throw InterpreterSemanticError("Error: Unknown operator.");
 		}
 }
 
@@ -151,10 +194,14 @@ Expression Expression::evaluateTree()
 			throw InterpreterSemanticError("Error: Cannot evaluate.");
 		for (unsigned int i = 0; i < children.size(); i++)
 			children[i]->evaluateTree();
+		
+		
 		atom.atomType = children[children.size() - 1]->atom.atomType;
 		atom.number = children[children.size() - 1]->atom.number;
 		atom.truthValue = children[children.size() - 1]->atom.truthValue;
 		atom.var = children[children.size() - 1]->atom.var;
+
+		euthanizeChildren();
 	}
 	else if (atom.var == "define"){
 		if (children.size() == 2 && children[0]->atom.atomType == SymbolType)
@@ -163,6 +210,8 @@ Expression Expression::evaluateTree()
 			if (children[1]->atom.atomType == BoolType || children[1]->atom.atomType == NumberType)
 				environment->setVariable(children[0]->atom.var, children[1]->atom);
 			atom = environment->findVar(children[0]->atom.var);
+
+			euthanizeChildren();
 		}
 		else
 			throw InterpreterSemanticError("Error: Cannot evaluate.");
@@ -178,6 +227,8 @@ Expression Expression::evaluateTree()
 				atom.number = children[1]->atom.number;
 				atom.truthValue = children[1]->atom.truthValue;
 				atom.var = children[1]->atom.var;
+				
+				euthanizeChildren();
 			}
 			else if (children[0]->atom.truthValue == false)
 			{
@@ -186,6 +237,8 @@ Expression Expression::evaluateTree()
 				atom.number = children[2]->atom.number;
 				atom.truthValue = children[2]->atom.truthValue;
 				atom.var = children[2]->atom.var;
+
+				euthanizeChildren();
 			}
 		}
 	}
@@ -252,4 +305,12 @@ bool Expression::operator==(const Expression & exp) const noexcept
 	}
 
 	return false;
+}
+
+void Expression::euthanizeChildren() {
+	std::size_t SIZE = children.size();
+	for (unsigned int i = 0; i < SIZE; i++) {
+		delete children[0];
+		children.erase(children.begin());
+	}
 }
