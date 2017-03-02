@@ -1,6 +1,5 @@
 #include "interpreter.hpp"
 #include <fstream>
-
 #include <string>
 
 int main(int argc, char *argv[])
@@ -29,31 +28,20 @@ int main(int argc, char *argv[])
 				}
 			}
 			else {
-				std::cerr << "Error: Parsing failed.";
+				std::cerr << "Error: Parsing failed." << std::endl;
 				return EXIT_FAILURE;
 			}
 		}
 	}
 
 	else if (argc == 2)
-	{
-		string filename = argv[1];
-		string initialExpression = "";
-		string finalExpression = "";
-
+	{		
+		std::string filename = argv[1];
 		std::ifstream instream(filename);
-		getline(instream, initialExpression);
-		while (!instream.fail()){
-			finalExpression.append(initialExpression.substr(0, initialExpression.find(';')));
-			finalExpression.append(" ");
-			getline(instream, initialExpression);
-		}
-		std::cout << finalExpression << endl;
-
-		std::istringstream ss(finalExpression);
+		
 		Interpreter a;
 
-		if (a.parse(ss)) {
+		if (a.parse(instream)) {
 			try {
 				a.eval().outputFinalAnswer();
 			}
@@ -63,7 +51,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		else {
-			std::cerr << "Error: Parsing failed.";
+			std::cerr << "Error: Parsing failed." << std::endl;
 			return EXIT_FAILURE;
 		}
 
@@ -73,11 +61,11 @@ int main(int argc, char *argv[])
 	{
 		std::string b;
 		Interpreter a;
-
-		while (1)
+		while (!cin.eof())
 		{
 			std::cout << "vtscript> ";
 			getline(cin, b);
+
 			std::istringstream ss(b);
 
 			if (a.parse(ss)) {
@@ -88,13 +76,13 @@ int main(int argc, char *argv[])
 					std::cout << error.what() << std::endl;
 				}
 			}
-			else
-				std::cerr << "Error: Parsing failed.";
+			else if (!cin.eof()) {
+				std::cerr << "Error: Parsing failed." << std::endl;
+			}
 		}
-
 	}
-	else
+	else {
 		std::cerr << "Error: Invalid Arguments." << std::endl;
-
+	}
 	return 0;
 }

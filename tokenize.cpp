@@ -145,7 +145,8 @@ bool Tokenize::buildAST(vector<string> token)
 							negCount++;
 						else if (i > 0 && i != token[pos].size() - 1 && token[pos][i] == 'e' && token[pos][i - 1] != '-')
 							eCount++;
-						else if (i > 0 && token[pos][i] == '.' && isdigit(token[pos][i-1]) && eCount == 0)
+						else if ((i > 0 && token[pos][i] == '.' && isdigit(token[pos][i-1]) && eCount == 0 && isdigit(token[pos][i+1])) ||
+							(i == 0 && token[pos].size() >= 1 && token[pos][i] == '.' && isdigit(token[pos][i+1])))
 							decimalCount++;
 						else
 							isNumber = false;

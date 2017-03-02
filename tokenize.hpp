@@ -16,7 +16,6 @@ using std::cerr;
 using std::endl;
 using std::getline;
 
-
 class Tokenize
 {
 public:
@@ -33,14 +32,11 @@ public:
 	Expression* head;
 	Expression* tail;
 	Expression* currentNode;
-	
 
 private:
 	
 
 };
-
-//#include "tokenize.cpp"
 
 #endif
 

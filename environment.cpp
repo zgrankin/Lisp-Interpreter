@@ -28,10 +28,8 @@ Environment::Environment() {
 
 bool Environment::setVariable(std::string aString, Atom envAtom)
 {
-	if (varMap.count(aString) > 0) {
+	if (varMap.count(aString) > 0)
 		throw InterpreterSemanticError("Error: Variable already defined.");
-		return false;
-	}
 	else {
 		varMap.insert(std::pair<std::string, Atom>(aString, envAtom));
 			return true;

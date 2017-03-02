@@ -17,6 +17,9 @@ set(test_src
   catch.hpp
   unittests.cpp
   test_interpreter.cpp
+  test_expression.cpp
+  test_tokenize.cpp
+  test_environment.cpp
 )
 
 # EDIT
@@ -25,6 +28,8 @@ set(vtscript_src
   ${interpreter_src}
   vtscript.cpp
   )
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # ------------------------------------------------
 # You should not need to edit any files below here

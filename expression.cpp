@@ -41,7 +41,7 @@ Expression::Expression(const std::string & value)
 
 void Expression::defineMethod()
 {
-		if (atom.var == "+") {
+		if (atom.var == "+" && children.size() != 0) {
 			atom.number = 0;
 			for (unsigned int i = 0; i < children.size(); i++) {
 				if (children[i]->atom.atomType == NumberType) {
@@ -53,7 +53,7 @@ void Expression::defineMethod()
 			}
 			euthanizeChildren();
 		}
-		else if (atom.var == "*") {
+		else if (atom.var == "*" && children.size() != 0) {
 			atom.number = 1;
 			for (unsigned int i = 0; i < children.size(); i++) {
 				if (children[i]->atom.atomType == NumberType) {
@@ -66,7 +66,7 @@ void Expression::defineMethod()
 			euthanizeChildren();
 		}
 
-		else if (atom.var == "and") {
+		else if (atom.var == "and" && children.size() != 0) {
 			atom.truthValue = true;
 			for (unsigned int i = 0; i < children.size(); i++) {
 				if (children[i]->atom.atomType == BoolType) {
@@ -78,7 +78,7 @@ void Expression::defineMethod()
 			}
 			euthanizeChildren();
 		}
-		else if (atom.var == "or") {
+		else if (atom.var == "or" && children.size() != 0) {
 			atom.truthValue = false;
 			for (unsigned int i = 0; i < children.size(); i++) {
 				if (children[i]->atom.atomType == BoolType) {
@@ -183,7 +183,7 @@ void Expression::defineMethod()
 
 			euthanizeChildren();
 			if (atom.atomType == NoneType)
-				throw InterpreterSemanticError("Error: Unknown operator.");
+				throw InterpreterSemanticError("Error: Unknown operation.");
 		}
 }
 
@@ -217,6 +217,9 @@ Expression Expression::evaluateTree()
 			throw InterpreterSemanticError("Error: Cannot evaluate.");
 	}
 	else if (atom.var == "if"){
+		if (children.size() != 3)
+			throw InterpreterSemanticError("Error: Cannot evaluate \"if\". Incorrect amount of children.");
+
 		children[0]->evaluateTree();
 		if (children[0]->atom.atomType == BoolType)
 		{
@@ -240,6 +243,9 @@ Expression Expression::evaluateTree()
 
 				euthanizeChildren();
 			}
+		}
+		else {
+			throw InterpreterSemanticError("Error: Cannot evaluate. First expression of \"if\" did not return a bool type.");
 		}
 	}
 
@@ -282,26 +288,17 @@ bool Expression::operator==(const Expression & exp) const noexcept
 {
 	if (atom.atomType == exp.atom.atomType && atom.atomType == BoolType)
 	{
-		if (atom.truthValue == exp.atom.truthValue && children.size() == exp.children.size())
-			return true;
-		else
-			return false;
+		return (atom.truthValue == exp.atom.truthValue && children.size() == exp.children.size());
 	}
 
 	else if (atom.atomType == exp.atom.atomType && atom.atomType == NumberType)
 	{
-		if (atom.number == exp.atom.number && children.size() == exp.children.size())
-			return true;
-		else
-			return false;
+		return (atom.number == exp.atom.number && children.size() == exp.children.size());
 	}
 
 	else if (atom.atomType == exp.atom.atomType && atom.atomType == SymbolType)
 	{
-		if (atom.var == exp.atom.var && children.size() == exp.children.size())
-			return true;
-		else
-			return false;
+		return (atom.var == exp.atom.var && children.size() == exp.children.size());
 	}
 
 	return false;
