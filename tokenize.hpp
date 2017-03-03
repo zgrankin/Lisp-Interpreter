@@ -34,7 +34,7 @@ public:
 
 private:
 	//void traversePostOrder(Expression* currentNode);
-	void destroyAST(Expression* currentNode);
+	void destroyAST(Expression* temp);
 
 };
 

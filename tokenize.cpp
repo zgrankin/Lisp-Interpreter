@@ -8,7 +8,7 @@ Tokenize::Tokenize() : head(nullptr), tail(nullptr), currentNode(nullptr)
 
 Tokenize::~Tokenize()
 {
-	//destroyAST(head);
+	destroyAST(head);
 }
 
 vector<string> Tokenize::tokenize(string expression)
@@ -243,13 +243,14 @@ bool Tokenize::buildAST(vector<string> token)
 //}
 
 
-void Tokenize::destroyAST(Expression *currentNode)
+void Tokenize::destroyAST(Expression *temp)
 {
-	if (head != nullptr) {
-		for (unsigned int i = 0; i < currentNode->children.size(); i++)
+	if (temp != nullptr)
+	{
+		while (!temp->children.empty())
 		{
-			destroyAST(currentNode->children[i]);
-			delete currentNode;
+			delete temp->children[0];
+			temp->children.erase(temp->children.begin());
 		}
 	}
 }
