@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 					a.eval().outputFinalAnswer();
 				}
 				catch (InterpreterSemanticError &error) {
-					std::cout << error.what() << std::endl;
+					std::cerr << error.what() << std::endl;
 				}
 			}
 			else if (!cin.eof()) {

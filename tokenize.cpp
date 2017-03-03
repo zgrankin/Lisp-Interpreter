@@ -8,7 +8,7 @@ Tokenize::Tokenize() : head(nullptr), tail(nullptr), currentNode(nullptr)
 
 Tokenize::~Tokenize()
 {
-	destroyAST(head);
+	delete head;
 }
 
 vector<string> Tokenize::tokenize(string expression)
@@ -219,10 +219,6 @@ bool Tokenize::buildAST(vector<string> token)
 		}
 
 	}
-
-	//traversePostOrder(head);
-
-	//return true;
 }
 
 //void Tokenize::traversePostOrder(Expression *currentNode)
