@@ -8,14 +8,6 @@ Expression::Expression()
 	atom.atomType = NoneType;
 }
 
-Expression::~Expression()
-{
-	/*std::size_t SIZE = children.size();
-	for (unsigned int i = 0; i < SIZE; i++) {
-		delete children[0];
-		children.erase(children.begin());
-	}*/
-}
 
 Expression::Expression(bool value)
 {

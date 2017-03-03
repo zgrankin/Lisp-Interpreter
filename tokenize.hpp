@@ -19,22 +19,22 @@ using std::getline;
 class Tokenize
 {
 public:
+	Tokenize();
+	~Tokenize();
+
 	Environment* environment;
 
 	std::vector<string> tokenize(string expression);
 
 	bool buildAST(std::vector<string> token); // what should I store as boolean type when making the tree?
 
-	void traversePostOrder(Expression* currentNode);
-
-	//void destroyAST(Expression* currentNode);
-
 	Expression* head;
 	Expression* tail;
 	Expression* currentNode;
 
 private:
-	
+	//void traversePostOrder(Expression* currentNode);
+	void destroyAST(Expression* currentNode);
 
 };
 

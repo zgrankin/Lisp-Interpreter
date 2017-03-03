@@ -1,10 +1,18 @@
 #include "tokenize.hpp"
 #include "interpreter.hpp"
 
+Tokenize::Tokenize() : head(nullptr), tail(nullptr), currentNode(nullptr)
+{
+	
+}
+
+Tokenize::~Tokenize()
+{
+	//destroyAST(head);
+}
+
 vector<string> Tokenize::tokenize(string expression)
 {
-
-
 	vector<string> token;
 	string expressionHolder = "";
 
@@ -99,7 +107,7 @@ bool Tokenize::buildAST(vector<string> token)
 
 			else if (token[pos] == "(" && token[pos + 1] == ")")
 			{
-				//cerr << "Parsing error: '(' was followed by ')'" << endl;
+				destroyAST(head);
 				return false;
 			}
 
@@ -109,8 +117,8 @@ bool Tokenize::buildAST(vector<string> token)
 					currentNode = currentNode->parent;
 				else if (currentNode->parent == nullptr && pos == token.size() - 1)
 					return true;
-				else if (currentNode->parent == nullptr && pos < token.size() - 1)
-					return false;
+				//else if (currentNode->parent == nullptr && pos < token.size() - 1)
+					//return false;
 				pos++;
 				currentState = stateA;
 			}
@@ -204,7 +212,7 @@ bool Tokenize::buildAST(vector<string> token)
 
 		case stateE:
 		{
-			//destroyAST(head);
+			destroyAST(head);
 			return false;
 		}
 			break;
@@ -212,36 +220,38 @@ bool Tokenize::buildAST(vector<string> token)
 
 	}
 
-	traversePostOrder(head);
+	//traversePostOrder(head);
 
-	return true;
+	//return true;
 }
 
-void Tokenize::traversePostOrder(Expression *currentNode)
-{
-	for (unsigned int i = 0; i < currentNode->children.size(); i++)
-	{
-		traversePostOrder(currentNode->children[i]);
-	}
-	cout << currentNode->atom.var << ": ";
-	if (currentNode->atom.atomType == 0)
-		cout << "noneType" << endl;
-	else if (currentNode->atom.atomType == 1)
-		cout << "boolType" << endl;
-	else if (currentNode->atom.atomType == 2)
-		cout << "numberType" << endl;
-	else if (currentNode->atom.atomType == 3)
-		cout << "symbolType" << endl;
-}
-
-
-//void Tokenize::destroyAST(Expression *currentNode)
+//void Tokenize::traversePostOrder(Expression *currentNode)
 //{
 //	for (unsigned int i = 0; i < currentNode->children.size(); i++)
 //	{
-//		destroyAST(currentNode->children[i]);
-//		delete currentNode;
+//		traversePostOrder(currentNode->children[i]);
 //	}
+//	cout << currentNode->atom.var << ": ";
+//	if (currentNode->atom.atomType == 0)
+//		cout << "noneType" << endl;
+//	else if (currentNode->atom.atomType == 1)
+//		cout << "boolType" << endl;
+//	else if (currentNode->atom.atomType == 2)
+//		cout << "numberType" << endl;
+//	else if (currentNode->atom.atomType == 3)
+//		cout << "symbolType" << endl;
 //}
+
+
+void Tokenize::destroyAST(Expression *currentNode)
+{
+	if (head != nullptr) {
+		for (unsigned int i = 0; i < currentNode->children.size(); i++)
+		{
+			destroyAST(currentNode->children[i]);
+			delete currentNode;
+		}
+	}
+}
 
 

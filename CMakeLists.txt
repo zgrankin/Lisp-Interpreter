@@ -31,6 +31,7 @@ set(vtscript_src
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
+
 # ------------------------------------------------
 # You should not need to edit any files below here
 # ------------------------------------------------
@@ -52,3 +53,17 @@ set_property(TARGET unittests PROPERTY CXX_STANDARD 11)
 
 enable_testing()
 add_test(unittests unittests)
+
+
+
+SET(GCC_COVERAGE_COMPILE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+
+# On Linux, using GCC, to enable coverage on tests -DCOVERAGE=TRUE
+if(UNIX AND NOT APPLE AND CMAKE_COMPILER_IS_GNUCXX AND COVERAGE)
+  message("Enabling Test Coverage")
+  set_target_properties(unittests PROPERTIES COMPILE_FLAGS ${GCC_COVERAGE_COMPILE_FLAGS} )
+  target_link_libraries(unittests gcov)
+  add_custom_target(coverage
+    COMMAND ${CMAKE_COMMAND} -E env "ROOT=${CMAKE_CURRENT_SOURCE_DIR}"
+    ${CMAKE_CURRENT_SOURCE_DIR}/coverage.sh) 
+endif()

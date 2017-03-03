@@ -31,8 +31,6 @@ public:
 	// Default construct an Expression of type None
 	Expression();
 
-	~Expression();
-
 	// Construct an Expression with a single Boolean atom with value
 	Expression(bool value);
 
