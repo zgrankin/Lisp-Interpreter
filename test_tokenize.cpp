@@ -12,17 +12,19 @@
 
 TEST_CASE("Test Tokenize for correct creation of tokens and building of tree", "[interpreter]") {
 
-	std::string program = "(hello 123 this is a test file)";
+	std::string program;
 	Tokenize a;
-	std::vector<std::string> tokenOut = a.tokenize(program);
-	
-	REQUIRE(tokenOut.size() == 9);
-	REQUIRE(a.buildAST(tokenOut));
+	std::vector<std::string> tokenOut;
 
 	program = ")";
 	tokenOut = a.tokenize(program);
 	REQUIRE(tokenOut.size() == 1);
 	REQUIRE(!a.buildAST(tokenOut));
+
+	program = "(hello 123 this is a test file)";
+	tokenOut = a.tokenize(program);
+	REQUIRE(tokenOut.size() == 9);
+	REQUIRE(a.buildAST(tokenOut));	
 
 	program = "(.a54 1 2)";
 	tokenOut = a.tokenize(program);
@@ -63,6 +65,4 @@ TEST_CASE("Test Special Parse Error Case", "[interpreter]") {
 	std::vector<std::string> tokenOut = a.tokenize(program);
 
 	REQUIRE(a.buildAST(tokenOut));
-
-
 }

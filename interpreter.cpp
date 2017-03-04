@@ -16,7 +16,10 @@ bool Interpreter::parse(std::istream & expression) noexcept
 
 Expression Interpreter::eval()
 {
-	return tree.head->evaluateTree();
+	Expression a;
+	a = tree.head->evaluateTree();
+	// tree.postEvalDestroy(tree.head);
+	return a;
 }
 
 string Interpreter::streamToString(std::istream & expression)

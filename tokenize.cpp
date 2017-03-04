@@ -3,7 +3,7 @@
 
 Tokenize::Tokenize() : head(nullptr), tail(nullptr), currentNode(nullptr)
 {
-	
+
 }
 
 Tokenize::~Tokenize()
@@ -49,7 +49,7 @@ vector<string> Tokenize::tokenize(string expression)
 	}
 
 	//for (unsigned int i = 0; i < token.size(); ++i)
-			//cout << "This is the token: " << token[i] << endl;
+	//cout << "This is the token: " << token[i] << endl;
 
 	//cout << endl;
 
@@ -58,6 +58,8 @@ vector<string> Tokenize::tokenize(string expression)
 
 bool Tokenize::buildAST(vector<string> token)
 {
+	postEvalDestroy(head);
+
 	if (token.size() == 0 || token[0] != "(") {
 		return false;
 	}
@@ -90,16 +92,18 @@ bool Tokenize::buildAST(vector<string> token)
 		case stateA:
 		{
 			if (token[pos] == "(" && token[pos + 1] != ")") {
-				Expression *newNode = new Expression;
-				newNode->environment = environment;
+				
+				tail = new Expression;
+
+				tail->environment = environment;
 				if (pos == 0) {
-					newNode->parent = nullptr; head = newNode; tail = newNode; currentNode = newNode;
+					tail->parent = nullptr; head = tail; tail = tail; currentNode = tail;
 				}
 				else {
-					tail = newNode;
+					tail = tail;
 					tail->parent = currentNode;
 					currentNode->children.push_back(tail);
-					currentNode = newNode;
+					currentNode = tail;
 				}
 				currentState = stateB;
 				pos++;
@@ -118,21 +122,21 @@ bool Tokenize::buildAST(vector<string> token)
 				else if (currentNode->parent == nullptr && pos == token.size() - 1)
 					return true;
 				//else if (currentNode->parent == nullptr && pos < token.size() - 1)
-					//return false;
+				//return false;
 				pos++;
 				currentState = stateA;
 			}
 
 			else
 			{
-				Expression *newNode = new Expression;
-				newNode->environment = environment;
-				tail = newNode;
+				tail = new Expression;
+				tail->environment = environment;
+				tail = tail;
 				tail->parent = currentNode;
 				currentNode->children.push_back(tail);
 				currentState = stateB;
 			}
-			
+
 		}
 		break;
 
@@ -153,8 +157,8 @@ bool Tokenize::buildAST(vector<string> token)
 							negCount++;
 						else if (i > 0 && i != token[pos].size() - 1 && token[pos][i] == 'e' && token[pos][i - 1] != '-')
 							eCount++;
-						else if ((i > 0 && token[pos][i] == '.' && isdigit(token[pos][i-1]) && eCount == 0 && isdigit(token[pos][i+1])) ||
-							(i == 0 && token[pos].size() >= 1 && token[pos][i] == '.' && isdigit(token[pos][i+1])))
+						else if ((i > 0 && token[pos][i] == '.' && isdigit(token[pos][i - 1]) && eCount == 0 && isdigit(token[pos][i + 1])) ||
+							(i == 0 && token[pos].size() >= 1 && token[pos][i] == '.' && isdigit(token[pos][i + 1])))
 							decimalCount++;
 						else
 							isNumber = false;
@@ -215,7 +219,7 @@ bool Tokenize::buildAST(vector<string> token)
 			destroyAST(head);
 			return false;
 		}
-			break;
+		break;
 		}
 
 	}
@@ -248,7 +252,20 @@ void Tokenize::destroyAST(Expression *temp)
 			delete temp->children[0];
 			temp->children.erase(temp->children.begin());
 		}
+
+		//delete temp;
 	}
 }
 
-
+void Tokenize::postEvalDestroy(Expression *temp)
+{
+	if (temp != nullptr)
+	{
+		while (!temp->children.empty())
+		{
+			delete temp->children[0];
+			temp->children.erase(temp->children.begin());
+		}
+		delete temp;
+	}
+}

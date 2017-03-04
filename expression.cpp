@@ -302,6 +302,7 @@ bool Expression::operator==(const Expression & exp) const noexcept
 }
 
 void Expression::euthanizeChildren() {
+	//(begin (define r 10) (* pi (* r r)))
 	while (!children.empty()) {
 		delete children[0];
 		children.erase(children.begin());

@@ -32,6 +32,8 @@ public:
 	Expression* tail;
 	Expression* currentNode;
 
+	void postEvalDestroy(Expression* temp);
+
 private:
 	//void traversePostOrder(Expression* currentNode);
 	void destroyAST(Expression* temp);
